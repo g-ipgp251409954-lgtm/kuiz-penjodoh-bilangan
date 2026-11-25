@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kuiz Penjodoh Bilangan</title>
+<style>
+:root{--bg:#eef1fb;--card:#ffffff;--ink:#1b2150;--mute:#505a8c;--line:#cfd6f0;--acc:#3b3fb8;--accink:#fff;--ok:#12a150;--okbg:#d3f5e2;--no:#d63a3a;--nobg:#fde0e0;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#13173f;--card:#1f2560;--ink:#f3f4ff;--mute:#b4bbee;--line:#3a4290;--acc:#9aa0ff;--accink:#13173f;--okbg:#14502f;--nobg:#552022;--ok:#5fd68f;--no:#ff8a8a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#13173f;--card:#1f2560;--ink:#f3f4ff;--mute:#b4bbee;--line:#3a4290;--acc:#9aa0ff;--accink:#13173f;--okbg:#14502f;--nobg:#552022;--ok:#5fd68f;--no:#ff8a8a;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Trebuchet MS","Segoe UI",Verdana,sans-serif;display:flex;flex-direction:column;overflow:hidden}
+#bar{height:10px;background:var(--line);flex:none}
+#bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .3s}
+main{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;justify-content:center;padding:2vh 6vw}
+.tag{align-self:flex-start;background:var(--acc);color:var(--accink);font-weight:700;font-size:clamp(14px,1.8vw,26px);padding:.35em 1em;border-radius:999px;margin-bottom:2vh}
+.q{font-size:clamp(28px,4.8vw,76px);line-height:1.3;font-weight:800;margin:0 0 4vh;max-width:21em}
+.blank{display:inline-block;min-width:3.2em;border-bottom:.09em solid var(--mute);text-align:center;padding:0 .2em;transition:all .25s}
+.blank.on{background:var(--okbg);color:var(--ok);border-radius:.25em;border-bottom-color:var(--ok)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:2.2vh 2vw}
+.opt{display:flex;align-items:center;gap:.7em;text-align:left;font:inherit;font-size:clamp(22px,3.4vw,54px);font-weight:800;color:var(--ink);background:var(--card);border:4px solid var(--line);border-radius:20px;padding:.5em .7em;cursor:pointer}
+.opt:hover{border-color:var(--acc)}
+.opt b{flex:none;width:1.5em;height:1.5em;border-radius:50%;background:var(--acc);color:var(--accink);display:grid;place-items:center;font-size:.8em}
+.opt.ok{background:var(--okbg);border-color:var(--ok)}.opt.ok b{background:var(--ok);color:#fff}
+.opt.ok::after{content:"✔";margin-left:auto;color:var(--ok)}
+.opt.no{background:var(--nobg);border-color:var(--no);color:var(--no)}.opt.no b{background:var(--no);color:#fff}
+.opt.no::after{content:"✘";margin-left:auto}
+.opt.shake{animation:shake .4s}
+.opt.dim{opacity:.4}
+@keyframes shake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+.bank{display:flex;flex-wrap:wrap;gap:1.6vh 1.2vw}
+.chip{font-size:clamp(20px,2.8vw,44px);font-weight:800;background:var(--card);border:4px solid var(--line);border-radius:16px;padding:.3em .8em;transition:all .2s}
+.chip.hit{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+.chip.used{opacity:.35;text-decoration:line-through}
+.hint{color:var(--mute);font-weight:700;font-size:clamp(16px,2vw,30px);margin:0 0 1.5vh}
+.big{font-size:clamp(40px,8vw,130px);font-weight:900;line-height:1.1;margin:0 0 2vh;color:var(--acc)}
+.sub{font-size:clamp(20px,2.7vw,42px);color:var(--mute);font-weight:700;max-width:26em;margin:0 0 3vh}
+.ans{margin-top:3vh;font-size:clamp(22px,3.2vw,50px);font-weight:800;background:var(--okbg);border-left:12px solid var(--ok);border-radius:14px;padding:.6em .9em;max-width:24em}
+.ans small{display:block;font-weight:700;font-size:.5em;color:var(--mute);margin-bottom:.3em}
+.ghost{margin-top:3vh;color:var(--mute);font-weight:700;font-size:clamp(18px,2.2vw,32px);border:4px dashed var(--line);border-radius:14px;padding:.8em 1em;max-width:24em}
+.cta{font:inherit;font-size:clamp(22px,2.8vw,40px);font-weight:800;background:var(--acc);color:var(--accink);border:0;border-radius:18px;padding:.6em 1.5em;cursor:pointer;align-self:flex-start}
+#teams{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:8px 2vw;background:var(--card);border-top:2px solid var(--line)}
+#teams.hide{display:none}
+.team{display:flex;align-items:center;gap:8px;border:3px solid var(--line);border-radius:14px;padding:3px 8px;background:var(--bg)}
+.team span{font-weight:800;font-size:clamp(13px,1.4vw,20px)}
+.team b{font-size:clamp(22px,2.6vw,38px);min-width:1.5em;text-align:center;color:var(--acc)}
+.team button{font:inherit;font-weight:800;font-size:20px;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:10px;padding:0 10px;cursor:pointer}
+footer{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;padding:10px 3vw;background:var(--card);border-top:2px solid var(--line)}
+footer button{font:inherit;font-weight:800;font-size:16px;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:12px;padding:8px 14px;cursor:pointer}
+footer button:hover{border-color:var(--acc)}
+footer button:disabled{opacity:.4}
+footer .rev{background:var(--acc);color:var(--accink);border-color:var(--acc)}
+footer .good{background:var(--ok);color:#fff;border-color:var(--ok)}
+footer .bad{background:var(--no);color:#fff;border-color:var(--no)}
+#cnt{color:var(--mute);font-size:15px;font-weight:700;min-width:5em}
+.sp{flex:1}
+#cf{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9}
+:focus-visible{outline:4px solid var(--acc);outline-offset:2px}
+:root{--g1:#c6ecff;--g2:#fff0b3}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--g1:#1b1f4f;--g2:#3a1c5e}}
+:root[data-theme="dark"]{--g1:#1b1f4f;--g2:#3a1c5e}
+body{background:linear-gradient(135deg,var(--g1),var(--g2))}
+#bar i{background:linear-gradient(90deg,#ff4d8d,#ffb703,#12c26a,#1d7ae0,#8b4fe8)}
+.tag{color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.2)}
+.opt{background:var(--c,#999);color:#fff;border:0;box-shadow:0 7px 0 rgba(0,0,0,.25);transition:transform .15s}
+.opt:hover{transform:translateY(-3px)}
+.opt:nth-child(1){--c:#e63946}.opt:nth-child(2){--c:#1d7ae0}.opt:nth-child(3){--c:#12a150}.opt:nth-child(4){--c:#d96c00}
+.opt b,.opt.ok b{background:#fff;color:var(--c)}
+.opt.ok{background:var(--c);color:#fff;outline:6px solid #fff;box-shadow:0 0 0 12px var(--ok),0 7px 0 rgba(0,0,0,.25);transform:scale(1.03)}
+.opt.ok::after{color:#fff}
+.opt.no{background:#3d3d3d;color:#fff;box-shadow:none;opacity:.55}
+.opt.no b{background:#fff;color:#3d3d3d}
+.opt.no::after{color:#fff}
+.opt.dim{opacity:.35;filter:grayscale(.7)}
+button.chip{font:inherit;font-size:clamp(20px,2.8vw,44px);font-weight:800;cursor:pointer;border:0;color:#fff;background:var(--c,#999);box-shadow:0 5px 0 rgba(0,0,0,.22)}
+.chip:nth-child(1){--c:#e63946}.chip:nth-child(2){--c:#1d7ae0}.chip:nth-child(3){--c:#12a150}.chip:nth-child(4){--c:#d96c00}.chip:nth-child(5){--c:#8b4fe8}.chip:nth-child(6){--c:#d6336c}.chip:nth-child(7){--c:#0b8f9a}.chip:nth-child(8){--c:#6c8f00}.chip:nth-child(9){--c:#c2410c}.chip:nth-child(10){--c:#4f46e5}
+.chip.hit{background:var(--c);color:#fff;outline:5px solid #fff;box-shadow:0 0 0 10px var(--ok);transform:scale(1.1)}
+.chip.used{opacity:.3;filter:grayscale(.7);cursor:default}
+.chip.no{background:#3d3d3d;opacity:.5;box-shadow:none}
+.chip.shake{animation:shake .4s}
+.cta{background:#ff4d8d;color:#fff;box-shadow:0 7px 0 #b02560}
+.team{background:var(--t,#3b3fb8);border:0;color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.22)}
+.team:nth-child(1){--t:#e63946}.team:nth-child(2){--t:#1d7ae0}.team:nth-child(3){--t:#12a150}.team:nth-child(4){--t:#d96c00}.team:nth-child(5){--t:#8b4fe8}
+.team b{color:#fff}
+.team button{background:rgba(0,0,0,.25);color:#fff;border:0}
+#teams{background:rgba(255,255,255,.35);border-top:0}
+@media (max-width:700px){.opts{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="bar"><i></i></div>
+<main id="stage"></main>
+<div id="teams"></div>
+<footer>
+  <button id="prev">◀ Sebelum</button>
+  <button id="rev" class="rev">Tunjuk jawapan</button>
+  <button id="next">Seterusnya ▶</button>
+  <button id="bg" class="good">Betul</button>
+  <button id="bb" class="bad">Salah</button>
+  <span id="cnt"></span>
+  <span class="sp"></span>
+  <button id="snd">Bunyi: hidup</button>
+  <button id="tg">Papan markah</button>
+  <button id="fs">Skrin penuh</button>
+</footer>
+<canvas id="cf" aria-hidden="true"></canvas>
+<script>
+const A=[
+ ["Ayah menanam "," pokok kelapa di tepi rumah.",["sebatang","sepohon","sekuntum","serumpun"],0],
+ ["Ibu membeli "," durian di pasar.",["seulas","sebiji","sekawan","sekeping"],1],
+ ["Beberapa orang murid sedang menganyam "," tikar mengkuang.",["sehelai","sebilah","segugus","seutas"],0],
+ ["Kakak memakai "," rantai emas yang dihadiahkan oleh ibu.",["sebentuk","seutas","sekuntum","sebiji"],1],
+ ["Nelayan itu berjaya menangkap "," ikan di laut.",["segerombolan","sekawan","seekor","seutas"],2]
+];
+const BANK=["secucuk","serumpun","sebilah","sehelai","segugus","seutas","sebuah","sekuntum","sebatang","sekawan"];
+const B=[
+ ["Ibu menghidangkan "," sate ayam kepada tetamu.","secucuk"],
+ ["Nenek menanam "," serai di belakang rumah.","serumpun"],
+ ["Abang menggunakan "," pisau untuk memotong buah.","sebilah"],
+ ["Kakak memakai "," selendang ketika menghadiri majlis perkahwinan.","sehelai"],
+ ["Ayah menghadiahkan "," anggur kepada ibu.","segugus"]
+];
+const C=[
+ ["Sebatang","Sebatang pen jatuh dari meja guru."],
+ ["Seekor","Seekor kucing tidur di bawah kerusi."],
+ ["Sekuntum","Sekuntum bunga mawar mekar di taman sekolah."],
+ ["Seulas","Adik menikmati seulas oren selepas makan."],
+ ["Sebentuk","Nenek menyimpan sebentuk cincin permata di dalam laci."]
+];
+const L=["A","B","C","D"];
+const S=[{t:"title"},{t:"sec",k:"Bahagian A",n:"Pilih jawapan yang betul",d:"Pilih penjodoh bilangan yang paling sesuai untuk melengkapkan ayat. (5 markah)"}];
+A.forEach((x,i)=>S.push({t:"mcq",k:"Bahagian A",i,x}));
+S.push({t:"sec",k:"Bahagian B",n:"Isi tempat kosong",d:"Lengkapkan ayat dengan penjodoh bilangan yang sesuai daripada senarai pilihan. Setiap perkataan dipakai sekali sahaja. (5 markah)"});
+B.forEach((x,i)=>S.push({t:"fill",k:"Bahagian B",i,x}));
+S.push({t:"sec",k:"Bahagian C",n:"Bina ayat",d:"Bina satu ayat yang lengkap dan gramatis berdasarkan penjodoh bilangan yang diberikan. (5 markah)"});
+C.forEach((x,i)=>S.push({t:"make",k:"Bahagian C",i,x}));
+S.push({t:"end"});
+
+let p=0,shown=false,wrong=[],last=-1,used=new Set(),soundOn=true;
+const st=document.getElementById("stage"),rv=document.getElementById("rev");
+const esc=s=>s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const TC={"Bahagian A":"#e63946","Bahagian B":"#1d7ae0","Bahagian C":"#12a150"};
+const tag=s=>`<span class="tag" style="background:${TC[s.k]}">${s.k} · Soalan ${s.i+1} / 5</span>`;
+const Q=["mcq","fill","make"];
+
+/* ---------- Bunyi ---------- */
+let ac=null;
+function ctx(){if(!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){return null}}if(ac.state==="suspended")ac.resume();return ac}
+function tone(f,t,d,type,v){const a=ctx();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+.05)}
+function applause(){const a=ctx();if(!a)return;const n=a.sampleRate*2,buf=a.createBuffer(1,n,a.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
+  const t0=a.currentTime+.15;
+  for(let i=0;i<130;i++){
+    const r=Math.random(),t=t0+r*2.6,env=Math.sin(Math.PI*Math.min(1,r*1.1))*.9+.1;
+    const s=a.createBufferSource();s.buffer=buf;
+    const f=a.createBiquadFilter();f.type="bandpass";f.frequency.value=1200+Math.random()*2800;f.Q.value=.9;
+    const g=a.createGain();const v=(.12+Math.random()*.25)*env;
+    g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+.07);
+    s.connect(f).connect(g).connect(a.destination);s.start(t,Math.random()*1.8,.08)}}
+function good(){if(!soundOn)return;const a=ctx();if(!a)return;const t=a.currentTime;
+  [523.25,659.25,783.99,1046.5].forEach((f,i)=>tone(f,t+i*.11,.5,"triangle",.22));applause()}
+function bad(){if(!soundOn)return;const a=ctx();if(!a)return;const t=a.currentTime;
+  [0,.42].forEach(o=>{tone(120,t+o,.34,"sawtooth",.32);tone(127,t+o,.34,"square",.16)})}
+/* ---------- Konfeti ---------- */
+const cv=document.getElementById("cf"),cx=cv.getContext("2d");let parts=[],raf=0;
+function confetti(){
+  if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
+  cv.width=innerWidth;cv.height=innerHeight;
+  const cols=["#ffb703","#3b3fb8","#12a150","#ff4d8d","#1d9bf0","#ffffff"];
+  for(let i=0;i<170;i++)parts.push({x:innerWidth/2+(Math.random()-.5)*innerWidth*.3,y:innerHeight*.55,
+    vx:(Math.random()-.5)*22,vy:-Math.random()*22-8,w:8+Math.random()*8,h:5+Math.random()*7,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[i%cols.length]});
+  if(!raf)raf=requestAnimationFrame(step)}
+function step(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  parts.forEach(q=>{q.vy+=.5;q.vx*=.99;q.x+=q.vx;q.y+=q.vy;q.r+=q.vr;
+    cx.save();cx.translate(q.x,q.y);cx.rotate(q.r);cx.fillStyle=q.c;cx.fillRect(-q.w/2,-q.h/2,q.w,q.h);cx.restore()});
+  parts=parts.filter(q=>q.y<cv.height+30);
+  raf=parts.length?requestAnimationFrame(step):0;if(!raf)cx.clearRect(0,0,cv.width,cv.height)}
+function celebrate(){good();confetti()}
+
+/* ---------- Paparan ---------- */
+function render(){
+  const s=S[p];let h="";
+  rv.style.display=Q.includes(s.t)?"":"none";[bg,bb].forEach(b=>b.style.display=s.t==="make"?"":"none");
+  if(s.t==="title") h=`<p class="big">Kuiz Penjodoh Bilangan</p><p class="sub">Bahasa Melayu · 15 soalan dalam tiga bahagian · 5 kumpulan bertanding.</p><button class="cta" onclick="go(1)">Mula kuiz</button>`;
+  else if(s.t==="sec") h=`<span class="tag" style="background:${TC[s.k]}">${s.k}</span><p class="big">${s.n}</p><p class="sub">${s.d}</p>`;
+  else if(s.t==="mcq"){
+    const [a,b,o,c]=s.x;
+    h=`${tag(s)}<p class="q">${a}<span class="blank ${shown?"on":""}">${shown?o[c]:"______"}</span>${b}</p><div class="opts">`+
+      o.map((t,j)=>{let cl="opt";
+        if(shown){cl+=j===c?" ok":" dim"}else if(wrong.includes(j)){cl+=" no"+(j===last?" shake":"")}
+        return `<button class="${cl}" onclick="choose(${j})"><b>${L[j]}</b>${t}</button>`}).join("")+`</div>`;
+  }
+  else if(s.t==="fill"){
+    const [a,b,w]=s.x;
+    h=`${tag(s)}<p class="q">${a}<span class="blank ${shown?"on":""}">${shown?w:"______"}</span>${b}</p><p class="hint">Senarai pilihan</p><div class="bank">`+
+      BANK.map(t=>{let cl="chip";if(shown&&t===w)cl+=" hit";else if(used.has(t)&&t!==w)cl+=" used";else if(wrong.includes(t))cl+=" no"+(t===last?" shake":"");return `<button class="${cl}" onclick="pickChip('${t}')">${t}</button>`}).join("")+`</div>`;
+  }
+  else if(s.t==="make"){
+    const [w,e]=s.x;
+    h=`${tag(s)}<p class="hint">Bina satu ayat yang lengkap dan gramatis menggunakan:</p><p class="big">${w}</p>`+
+      (shown?`<div class="ans"><small>Contoh ayat (jawapan murid boleh berbeza)</small>${esc(e)}</div>`:`<div class="ghost">Beri masa kepada setiap kumpulan untuk menulis atau menyebut ayat mereka.</div>`);
+  }
+  else h=`<p class="big">Tahniah, kuiz tamat!</p><p class="sub">Semak markah di papan markah. Kumpulan mana yang menang?</p><button class="cta" onclick="restart()">Mula semula</button>`;
+  st.innerHTML=h;
+  document.querySelector("#bar i").style.width=(p/(S.length-1)*100)+"%";
+  document.getElementById("cnt").textContent=(p+1)+" / "+S.length;
+  rv.textContent=shown?"Sembunyi jawapan":"Tunjuk jawapan";
+  document.getElementById("prev").disabled=p===0;
+  document.getElementById("next").disabled=p===S.length-1;
+}
+function go(d){
+  const n=p+d;if(n<0||n>=S.length)return;
+  p=n;shown=false;wrong=[];last=-1;
+  used=new Set(S.slice(0,p).filter(z=>z.t==="fill").map(z=>z.x[2]));
+  render();
+}
+function choose(j){
+  if(shown)return;
+  if(j===S[p].x[3]){shown=true;render();celebrate()}
+  else if(!wrong.includes(j)){wrong.push(j);last=j;render();bad()}
+}
+function pickChip(t){
+  const s=S[p];if(shown||used.has(t)||wrong.includes(t))return;
+  if(t===s.x[2]){shown=true;render();celebrate()}
+  else{wrong.push(t);last=t;render();bad()}
+}
+function toggle(){
+  if(!Q.includes(S[p].t))return;
+  shown=!shown;render();if(shown)celebrate()}
+function restart(){p=0;shown=false;wrong=[];used=new Set();sc=[0,0,0,0,0];drawTeams();render()}
+
+const bg=document.getElementById("bg"),bb=document.getElementById("bb");
+document.getElementById("next").onclick=()=>go(1);
+document.getElementById("prev").onclick=()=>go(-1);
+rv.onclick=toggle;bg.onclick=celebrate;bb.onclick=bad;
+document.getElementById("snd").onclick=e=>{soundOn=!soundOn;e.target.textContent="Bunyi: "+(soundOn?"hidup":"mati");if(soundOn)ctx()};
+document.getElementById("fs").onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
+document.addEventListener("keydown",e=>{
+  const k=e.key;
+  if(k==="ArrowRight"||k==="PageDown")go(1);
+  else if(k==="ArrowLeft"||k==="PageUp")go(-1);
+  else if(k===" "||k==="Enter"){if(document.activeElement.tagName==="BUTTON")return;e.preventDefault();toggle()}
+  else if(S[p].t==="mcq"&&k.length===1&&"abcdABCD".includes(k))choose("abcd".indexOf(k.toLowerCase()));
+});
+
+const tm=document.getElementById("teams");let sc=[0,0,0,0,0];
+function drawTeams(){
+  tm.innerHTML=sc.map((v,i)=>`<div class="team"><span>Kumpulan ${i+1}</span><button onclick="adj(${i},-1)" aria-label="Tolak markah kumpulan ${i+1}">−</button><b>${v}</b><button onclick="adj(${i},1)" aria-label="Tambah markah kumpulan ${i+1}">+</button></div>`).join("");
+}
+function adj(i,d){sc[i]=Math.max(0,sc[i]+d);drawTeams()}
+document.getElementById("tg").onclick=()=>tm.classList.toggle("hide");
+drawTeams();render();
+</script>
+</body>
+</html>
